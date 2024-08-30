@@ -1,1 +1,161 @@
-Hellow World
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Login Form</h1>
+    <form id="login-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        
+        <button type="submit">Login</button>
+    </form>
+    <button id="logout" style="display: none;">Logout</button>
+    <p id="message"></p>
+    
+    <h2>Previously Logged-In Users</h2>
+    <ul id="user-list"></ul>
+
+    <script>
+        const form = document.getElementById('login-form');
+        const message = document.getElementById('message');
+        const logoutButton = document.getElementById('logout');
+        const userList = document.getElementById('user-list');
+
+        // Function to update UI based on stored data
+        function updateUI() {
+            const savedUsername = localStorage.getItem('username');
+            if (savedUsername) {
+                message.innerText = `Welcome back, ${savedUsername}!`;
+                form.style.display = 'none'; // Hide the form if user is already logged in
+                logoutButton.style.display = 'inline'; // Show logout button
+            } else {
+                form.style.display = 'block'; // Show the form if no user data
+                logoutButton.style.display = 'none'; // Hide logout button
+            }
+            updateUserList();
+        }
+
+        // Function to update the list of previously logged-in users
+        function updateUserList() {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            userList.innerHTML = ''; // Clear the list
+            users.forEach(user => {
+                const listItem = document.createElement('li');
+                listItem.textContent = user;
+                userList.appendChild(listItem);
+            });
+        }
+
+        // Call updateUI on page load
+        window.onload = updateUI;
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault(); // Prevent form from submitting normally
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Save data to localStorage
+            localStorage.setItem('username', username);
+            localStorage.setItem('password', password); // Note: storing passwords in localStorage is not secure
+
+            // Add username to the list of logged-in users
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            if (!users.includes(username)) {
+                users.push(username);
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+
+            // Update UI
+            updateUI();
+        });
+
+        // Logout functionality
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('username');
+            localStorage.removeItem('password');
+            updateUI(); // Update UI to reflect logout
+        });
+    </script>
+</body>
+</html>
+
+
+<style type="text/css">
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+form {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#message {
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+
+
+
+  </style>
